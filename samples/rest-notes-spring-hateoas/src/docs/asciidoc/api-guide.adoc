@@ -6,6 +6,10 @@ Andy Wilkinson;
 :toc: left
 :toclevels: 4
 :sectlinks:
+:srd-curl-request-title: Example request
+:srd-http-response-title: Example response
+:srd-request-fields-title: Response structure
+:srd-response-fields-title: Response structure
 
 [[overview]]
 = Overview
@@ -133,17 +137,7 @@ The Notes resources is used to create and list notes
 
 A `GET` request will list all of the service's notes.
 
-==== Response structure
-
-include::{snippets}/notes-list-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/notes-list-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/notes-list-example/http-response.adoc[]
+include::srd:notes-list-example[snippets='response-fields,curl-request,http-response',level=4]
 
 
 
@@ -152,17 +146,7 @@ include::{snippets}/notes-list-example/http-response.adoc[]
 
 A `POST` request is used to create a note
 
-==== Request structure
-
-include::{snippets}/notes-create-example/request-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/notes-create-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/notes-create-example/http-response.adoc[]
+include::srd:notes-create-example[snippets='request-fields,curl-request,http-response',level=4]
 
 
 
@@ -178,36 +162,16 @@ The Tags resource is used to create and list tags.
 
 A `GET` request will list all of the service's tags.
 
-==== Response structure
-
-include::{snippets}/tags-list-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tags-list-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tags-list-example/http-response.adoc[]
+include::srd:tags-list-example[snippets='response-fields,curl-request,http-response',level=4]
 
 
 
 [[resources-tags-create]]
 === Creating a tag
 
-A `POST` request is used to create a note
+A `POST` request is used to create a tag
 
-==== Request structure
-
-include::{snippets}/tags-create-example/request-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tags-create-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tags-create-example/http-response.adoc[]
+include::srd:tags-create-example[snippets='request-fields,curl-request,http-response',level=4]
 
 
 
@@ -230,17 +194,7 @@ include::{snippets}/note-get-example/links.adoc[]
 
 A `GET` request will retrieve the details of a note
 
-==== Response structure
-
-include::{snippets}/note-get-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/note-get-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/note-get-example/http-response.adoc[]
+include::srd:note-get-example[snippets='response-fields,curl-request,http-response',level=4]
 
 
 
@@ -249,19 +203,8 @@ include::{snippets}/note-get-example/http-response.adoc[]
 
 A `PATCH` request is used to update a note
 
-==== Request structure
+include::srd:note-update-example[snippets='request-fields,curl-request,http-response',level=4]
 
-include::{snippets}/note-update-example/request-fields.adoc[]
-
-To leave an attribute of a note unchanged, any of the above may be omitted from the request.
-
-==== Example request
-
-include::{snippets}/note-update-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/note-update-example/http-response.adoc[]
 
 
 [[resources-tag]]
@@ -283,17 +226,7 @@ include::{snippets}/tag-get-example/links.adoc[]
 
 A `GET` request will retrieve the details of a tag
 
-==== Response structure
-
-include::{snippets}/tag-get-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tag-get-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tag-get-example/http-response.adoc[]
+include::srd:tag-get-example[snippets='response-fields,curl-request,http-response',level=4]
 
 
 
@@ -302,14 +235,4 @@ include::{snippets}/tag-get-example/http-response.adoc[]
 
 A `PATCH` request is used to update a tag
 
-==== Request structure
-
-include::{snippets}/tag-update-example/request-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tag-update-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tag-update-example/http-response.adoc[]
+include::srd:tag-update-example[snippets='request-fields,curl-request,http-response',level=4]
