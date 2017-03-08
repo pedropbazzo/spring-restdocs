@@ -219,17 +219,12 @@ public abstract class AbstractFieldsSnippet extends TemplatedSnippet {
 	}
 
 	private ContentHandler getContentHandler(byte[] content, MediaType contentType) {
-		try {
-			if (contentType != null
-					&& MediaType.APPLICATION_XML.isCompatibleWith(contentType)) {
-				return new XmlContentHandler(content);
-			}
-			else {
-				return new JsonContentHandler(content);
-			}
+		if (contentType != null
+				&& MediaType.APPLICATION_XML.isCompatibleWith(contentType)) {
+			return new XmlContentHandler(content);
 		}
-		catch (IOException ex) {
-			throw new ModelCreationException(ex);
+		else {
+			return new JsonContentHandler(content);
 		}
 	}
 
