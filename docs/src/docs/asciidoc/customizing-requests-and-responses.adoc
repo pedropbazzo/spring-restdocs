@@ -19,6 +19,14 @@ include::{examples-dir}/com/example/mockmvc/PerTestPreprocessing.java[tags=prepr
 <2> Apply a response preprocessor that will pretty print its content.
 
 [source,java,indent=0,role="secondary"]
+.WebTestClient
+----
+include::{examples-dir}/com/example/webtestclient/PerTestPreprocessing.java[tags=preprocessing]
+----
+<1> Apply a request preprocessor that will remove the header named `Foo`.
+<2> Apply a response preprocessor that will pretty print its content.
+
+[source,java,indent=0,role="secondary"]
 .REST Assured
 ----
 include::{examples-dir}/com/example/restassured/PerTestPreprocessing.java[tags=preprocessing]
@@ -26,10 +34,10 @@ include::{examples-dir}/com/example/restassured/PerTestPreprocessing.java[tags=p
 <1> Apply a request preprocessor that will remove the header named `Foo`.
 <2> Apply a response preprocessor that will pretty print its content.
 
-Alternatively, you may want to apply the same preprocessors to every test. You can do
-so by configuring the preprocessors in your `@Before` method and using the
-<<documentating-your-api-parameterized-output-directories, support for parameterized
-output directories>>:
+Alternatively, you may want to apply the same preprocessors to every test. If you are
+using MockMvc or REST Assured, you can do so by configuring the preprocessors in your
+`@Before` method and using the <<documentating-your-api-parameterized-output-directories,
+support for parameterized output directories>>:
 
 [source,java,indent=0,role="primary"]
 .MockMvc

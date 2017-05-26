@@ -55,6 +55,12 @@ include::{examples-dir}/com/example/mockmvc/CustomEncoding.java[tags=custom-enco
 ----
 
 [source,java,indent=0,role="secondary"]
+.WebTestClient
+----
+include::{examples-dir}/com/example/webtestclient/CustomEncoding.java[tags=custom-encoding]
+----
+
+[source,java,indent=0,role="secondary"]
 .REST Assured
 ----
 include::{examples-dir}/com/example/restassured/CustomEncoding.java[tags=custom-encoding]
@@ -77,6 +83,12 @@ box. You can change the default format using the `RestDocumentationConfigurer` A
 .MockMvc
 ----
 include::{examples-dir}/com/example/mockmvc/CustomFormat.java[tags=custom-format]
+----
+
+[source,java,indent=0,role="secondary"]
+.WebTestClient
+----
+include::{examples-dir}/com/example/webtestclient/CustomFormat.java[tags=custom-format]
 ----
 
 [source,java,indent=0,role="secondary"]
@@ -107,6 +119,12 @@ snippet by default:
 .MockMvc
 ----
 include::{examples-dir}/com/example/mockmvc/CustomDefaultSnippets.java[tags=custom-default-snippets]
+----
+
+[source,java,indent=0,role="secondary"]
+.WebTestClient
+----
+include::{examples-dir}/com/example/webtestclient/CustomDefaultSnippets.java[tags=custom-default-snippets]
 ----
 
 [source,java,indent=0,role="secondary"]
