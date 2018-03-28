@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 the original author or authors.
+ * Copyright 2014-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,11 @@ package org.springframework.restdocs.payload;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -125,23 +128,70 @@ class JsonContentHandler implements ContentHandler {
 			return this.fieldTypeResolver.resolveFieldType(fieldDescriptor,
 					readContent());
 		}
-		if (!(fieldDescriptor.getType() instanceof JsonFieldType)) {
+		if (!(fieldDescriptor.getType() instanceof JsonFieldType)
+				&& !(fieldDescriptor.getType() instanceof Collection)) {
 			return fieldDescriptor.getType();
 		}
-		JsonFieldType descriptorFieldType = (JsonFieldType) fieldDescriptor.getType();
+		JsonFieldType actualFieldType = resolveFieldType(fieldDescriptor);
+		if (actualFieldType == null) {
+			return fieldDescriptor.getType();
+		}
+		if (fieldDescriptor.getType() instanceof Collection) {
+			return determineFieldType(fieldDescriptor, actualFieldType,
+					(Collection<?>) fieldDescriptor.getType());
+		}
+		return determineFieldType(fieldDescriptor, actualFieldType,
+				(JsonFieldType) fieldDescriptor.getType());
+	}
+
+	private JsonFieldType resolveFieldType(FieldDescriptor fieldDescriptor) {
 		try {
-			JsonFieldType actualFieldType = this.fieldTypeResolver
-					.resolveFieldType(fieldDescriptor, readContent());
-			if (descriptorFieldType == JsonFieldType.VARIES
-					|| descriptorFieldType == actualFieldType
-					|| (fieldDescriptor.isOptional()
-							&& actualFieldType == JsonFieldType.NULL)) {
-				return descriptorFieldType;
-			}
-			throw new FieldTypesDoNotMatchException(fieldDescriptor, actualFieldType);
+			return this.fieldTypeResolver.resolveFieldType(fieldDescriptor,
+					readContent());
 		}
 		catch (FieldDoesNotExistException ex) {
-			return fieldDescriptor.getType();
+			return null;
+		}
+	}
+
+	private Object determineFieldType(FieldDescriptor fieldDescriptor,
+			JsonFieldType actualFieldType, Collection<?> fieldTypes) {
+		List<JsonFieldType> jsonFieldTypes = fieldTypes.stream()
+				.filter(JsonFieldType.class::isInstance).map(JsonFieldType.class::cast)
+				.collect(Collectors.toList());
+		if (jsonFieldTypes.size() != fieldTypes.size()) {
+			return fieldTypes;
+		}
+		if (hasMatchingFieldType(actualFieldType, fieldDescriptor.isOptional(),
+				jsonFieldTypes)) {
+			return jsonFieldTypes;
+		}
+		throw new FieldTypesDoNotMatchException(fieldDescriptor, actualFieldType);
+	}
+
+	private Object determineFieldType(FieldDescriptor fieldDescriptor,
+			JsonFieldType actualFieldType, JsonFieldType descriptorFieldType) {
+		if (hasMatchingFieldType(actualFieldType, fieldDescriptor.isOptional(),
+				Arrays.asList(descriptorFieldType))) {
+			return descriptorFieldType;
+		}
+		throw new FieldTypesDoNotMatchException(fieldDescriptor, actualFieldType);
+	}
+
+	private boolean hasMatchingFieldType(JsonFieldType actualFieldType, boolean optional,
+			List<JsonFieldType> descriptorFieldTypes) {
+		try {
+			for (JsonFieldType descriptorFieldType : descriptorFieldTypes) {
+				if (descriptorFieldType == JsonFieldType.VARIES
+						|| descriptorFieldType == actualFieldType
+						|| (optional && actualFieldType == JsonFieldType.NULL)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		catch (FieldDoesNotExistException ex) {
+			return true;
 		}
 	}
 

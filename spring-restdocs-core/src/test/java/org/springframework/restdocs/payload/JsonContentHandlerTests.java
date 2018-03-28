@@ -62,6 +62,27 @@ public class JsonContentHandlerTests {
 	}
 
 	@Test
+	public void fieldTypesDoNotMatchExceptionThrownWhenDescriptorHasMultipleTypesAndFieldValueDoesNotMatch()
+			throws IOException {
+		this.thrown.expect(FieldTypesDoNotMatchException.class);
+		new JsonContentHandler("{\"a\":[{\"id\":null},{\"id\":1}]}".getBytes())
+				.determineFieldType(new FieldDescriptor("a.[].id")
+						.type(JsonFieldType.STRING, JsonFieldType.NULL));
+	}
+
+	@Test
+	public void whenDescriptorHasMultipleTypesValuesOfFieldMustMatchOneOfThem()
+			throws IOException {
+		this.thrown.expect(FieldTypesDoNotMatchException.class);
+		Object fieldType = new JsonContentHandler(
+				"{\"a\":[{\"id\":null},{\"id\":1}]}".getBytes())
+						.determineFieldType(new FieldDescriptor("a.[].id")
+								.type(JsonFieldType.STRING, JsonFieldType.NULL));
+		assertThat(fieldType,
+				is(equalTo(Arrays.asList(JsonFieldType.STRING, JsonFieldType.NULL))));
+	}
+
+	@Test
 	public void typeForOptionalFieldWithNumberAndThenNullValueIsNumber()
 			throws IOException {
 		Object fieldType = new JsonContentHandler(

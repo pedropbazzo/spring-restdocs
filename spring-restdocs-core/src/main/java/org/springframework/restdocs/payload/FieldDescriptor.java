@@ -16,6 +16,9 @@
 
 package org.springframework.restdocs.payload;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.restdocs.snippet.IgnorableDescriptor;
 
 /**
@@ -52,6 +55,27 @@ public class FieldDescriptor extends IgnorableDescriptor<FieldDescriptor> {
 	 */
 	public final FieldDescriptor type(Object type) {
 		this.type = type;
+		return this;
+	}
+
+	/**
+	 * Specifies the possible types of the field when the field may have more than one
+	 * type. When documenting a JSON payload, the {@link JsonFieldType} enumeration will
+	 * typically be used.
+	 *
+	 * @param type The first possible type of the field
+	 * @param types Additional possible types of the field
+	 * @return {@code this}
+	 * @since 2.1.0
+	 * @see JsonFieldType
+	 */
+	public final FieldDescriptor type(Object type, Object... types) {
+		List<Object> allTypes = new ArrayList<>();
+		allTypes.add(type);
+		for (Object additionalType : types) {
+			allTypes.add(additionalType);
+		}
+		this.type = allTypes;
 		return this;
 	}
 
