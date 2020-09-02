@@ -16,12 +16,15 @@
 
 package org.springframework.restdocs.templates.mustache;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.restdocs.mustache.Mustache;
@@ -139,7 +142,14 @@ public class MustacheTemplateEngine implements TemplateEngine {
 		Resource templateResource = this.templateResourceResolver.resolveTemplateResource(name);
 		return new MustacheTemplate(
 				this.compiler.compile(new InputStreamReader(templateResource.getInputStream(), this.templateEncoding)),
-				this.context);
+				createSource(name, templateResource), this.context);
+	}
+
+	private MustacheTemplateSource createSource(String name, Resource resource) throws IOException {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+			List<String> lines = reader.lines().collect(Collectors.toList());
+			return new MustacheTemplateSource(name, lines);
+		}
 	}
 
 	/**

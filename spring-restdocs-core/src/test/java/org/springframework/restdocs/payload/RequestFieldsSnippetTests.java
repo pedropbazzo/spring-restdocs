@@ -52,6 +52,16 @@ public class RequestFieldsSnippetTests extends AbstractSnippetTests {
 	}
 
 	@Test
+	public void missingDescription() throws IOException {
+		new RequestFieldsSnippet(Arrays.asList(fieldWithPath("a.b").description("one"),
+				fieldWithPath("a.c").description("two"), fieldWithPath("a")))
+						.document(this.operationBuilder.request("http://localhost")
+								.content("{\"a\": {\"b\": 5, \"c\": \"charlie\"}}").build());
+		assertThat(this.generatedSnippets.requestFields()).is(tableWithHeader("Path", "Type", "Description")
+				.row("`a.b`", "`Number`", "one").row("`a.c`", "`String`", "two").row("`a`", "`Object`", "three"));
+	}
+
+	@Test
 	public void mapRequestWithFields() throws IOException {
 		new RequestFieldsSnippet(Arrays.asList(fieldWithPath("a.b").description("one"),
 				fieldWithPath("a.c").description("two"), fieldWithPath("a").description("three")))

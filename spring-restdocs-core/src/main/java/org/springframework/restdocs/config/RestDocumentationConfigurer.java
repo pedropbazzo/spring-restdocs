@@ -16,6 +16,8 @@
 
 package org.springframework.restdocs.config;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,6 +26,8 @@ import java.util.Map;
 
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.mustache.Mustache;
+import org.springframework.restdocs.mustache.Mustache.Lambda;
+import org.springframework.restdocs.mustache.Template.Fragment;
 import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderResolverFactory;
 import org.springframework.restdocs.snippet.StandardWriterResolver;
 import org.springframework.restdocs.snippet.WriterResolver;
@@ -114,11 +118,18 @@ public abstract class RestDocumentationConfigurer<S extends AbstractConfigurer, 
 				Map<String, Object> templateContext = new HashMap<>();
 				if (snippetConfiguration.getTemplateFormat().getId().equals(TemplateFormats.asciidoctor().getId())) {
 					templateContext.put("tableCellContent", new AsciidoctorTableCellContentLambda());
+					templateContext.put("descriptor", new Lambda() {
+
+						@Override
+						public void execute(Fragment fragment, Writer writer) throws IOException {
+							writer.write(fragment.execute());
+						}
+
+					});
 				}
 				engineToUse = new MustacheTemplateEngine(
 						new StandardTemplateResourceResolver(snippetConfiguration.getTemplateFormat()),
-						Charset.forName(snippetConfiguration.getEncoding()), Mustache.compiler().escapeHTML(false),
-						templateContext);
+						Charset.forName(snippetConfiguration.getEncoding()), Mustache.compiler().escapeHTML(false));
 			}
 			configuration.put(TemplateEngine.class.getName(), engineToUse);
 		}

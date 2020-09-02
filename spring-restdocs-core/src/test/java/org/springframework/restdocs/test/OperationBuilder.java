@@ -50,6 +50,7 @@ import org.springframework.restdocs.templates.StandardTemplateResourceResolver;
 import org.springframework.restdocs.templates.TemplateEngine;
 import org.springframework.restdocs.templates.TemplateFormat;
 import org.springframework.restdocs.templates.mustache.AsciidoctorTableCellContentLambda;
+import org.springframework.restdocs.templates.mustache.DescriptorPropertyLambda;
 import org.springframework.restdocs.templates.mustache.MustacheTemplateEngine;
 
 /**
@@ -102,6 +103,7 @@ public class OperationBuilder extends OperationTestRule {
 		if (this.attributes.get(TemplateEngine.class.getName()) == null) {
 			Map<String, Object> templateContext = new HashMap<>();
 			templateContext.put("tableCellContent", new AsciidoctorTableCellContentLambda());
+			templateContext.put("descriptorProperty", new DescriptorPropertyLambda());
 			this.attributes.put(TemplateEngine.class.getName(),
 					new MustacheTemplateEngine(new StandardTemplateResourceResolver(this.templateFormat),
 							Mustache.compiler().escapeHTML(false), templateContext));

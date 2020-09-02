@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 the original author or authors.
+ * Copyright 2014-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,12 @@ package org.springframework.restdocs.templates.mustache;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.restdocs.mustache.MustacheException;
 import org.springframework.restdocs.templates.Template;
+import org.springframework.restdocs.templates.TemplateRenderingException;
 
 /**
  * An adapter that exposes a compiled <a href="https://mustache.github.io">Mustache</a>
@@ -33,6 +36,8 @@ public class MustacheTemplate implements Template {
 	private final org.springframework.restdocs.mustache.Template delegate;
 
 	private final Map<String, Object> context;
+
+	private final MustacheTemplateSource source;
 
 	/**
 	 * Creates a new {@code MustacheTemplate} that adapts the given {@code delegate}.
@@ -51,7 +56,23 @@ public class MustacheTemplate implements Template {
 	 * @param context the context
 	 */
 	public MustacheTemplate(org.springframework.restdocs.mustache.Template delegate, Map<String, Object> context) {
+		this(delegate, null, context);
+	}
+
+	/**
+	 * Creates a new {@code MustacheTemplate} that adapts the given {@code delegate}.
+	 * During rendering, the given {@code context} and the context passed into
+	 * {@link #render(Map)} will be combined and then passed to the delegate when it is
+	 * {@link org.springframework.restdocs.mustache.Template#execute executed}.
+	 * @param delegate the delegate to adapt
+	 * @param context the context
+	 * @param source the source of the template for diagnostic purposes
+	 * @since 2.0.5
+	 */
+	public MustacheTemplate(org.springframework.restdocs.mustache.Template delegate, MustacheTemplateSource source,
+			Map<String, Object> context) {
 		this.delegate = delegate;
+		this.source = source;
 		this.context = context;
 	}
 
@@ -59,7 +80,22 @@ public class MustacheTemplate implements Template {
 	public String render(Map<String, Object> context) {
 		Map<String, Object> combinedContext = new HashMap<>(this.context);
 		combinedContext.putAll(context);
-		return this.delegate.execute(combinedContext);
+		try {
+			return this.delegate.execute(combinedContext);
+		}
+		catch (MustacheException.Context ex) {
+			if (this.source != null) {
+				StringBuilder message = new StringBuilder(
+						String.format("Failed to render '%s'. No value for '%s' on line %d:%n%n", this.source.getName(),
+								ex.key, ex.lineNo));
+				List<String> lines = this.source.getLines();
+				for (int i = 0; i < lines.size(); i++) {
+					message.append(String.format("%3s. %s%n", i + 1, lines.get(i)));
+				}
+				throw new TemplateRenderingException(message.toString(), ex);
+			}
+			throw ex;
+		}
 	}
 
 }
