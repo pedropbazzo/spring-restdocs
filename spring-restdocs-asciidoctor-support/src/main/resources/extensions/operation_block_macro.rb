@@ -93,7 +93,7 @@ class OperationBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
 
   def write_content(content, snippet, operation)
     if File.file? snippet.path
-      content.puts File.readlines(snippet.path).join
+      content.puts File.readlines(snippet.path, :encoding => 'UTF-8').join
     else
       warn "Snippet #{snippet.name} not found at #{snippet.path} for"\
            " operation #{operation}"
